@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rafflesia Condominium | Guest Guide</title>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Config & Custom Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Transitions */
+        .fade-enter { opacity: 0; transform: translateY(10px); }
+        .fade-enter-active { opacity: 1; transform: translateY(0); transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
+        
+        /* Mobile Sidebar */
+        .sidebar-backdrop { background-color: rgba(0,0,0,0.5); }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- LOGIN OVERLAY -->
+    <div id="login-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900 bg-cover bg-center transition-opacity duration-500" 
+         style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+        
+        <div class="w-full max-w-md p-6 animate-fade-in-up">
+            <div class="text-center text-white mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
+                    <i class="fa-solid fa-house-chimney text-3xl text-primary-500"></i>
+                </div>
+                <h1 class="text-3xl font-bold tracking-tight mb-2">Rafflesia Condo</h1>
+                <p class="text-gray-300">Guest Experience Portal</p>
+            </div>
+            
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-1 shadow-2xl">
+                <form onsubmit="handleLogin(event)" class="flex flex-col sm:flex-row gap-2 p-2">
+                    <input type="password" id="password-input" placeholder="Guest Password" 
+                           class="flex-1 bg-white/90 border-0 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all">
+                    <button type="submit" 
+                            class="bg-primary-600 hover:bg-primary-500 text-white font-semibold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-primary-500/30 flex items-center justify-center gap-2">
+                        <span>Access</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+            <p id="error-msg" class="text-red-400 text-center mt-4 text-sm font-medium opacity-0 transition-opacity">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> Incorrect password
+            </p>
+        </div>
+    </div>
+
+    <!-- MAIN APP LAYOUT -->
+    <div id="app-layout" class="flex-1 flex overflow-hidden opacity-0 transition-opacity duration-500">
+        
+        <!-- Mobile Header -->
+        <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center z-30 shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+                <h2 class="font-bold text-gray-900">Rafflesia</h2>
+            </div>
+            <button onclick="toggleSidebar()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition-colors">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </header>
+
+        <!-- Sidebar & Backdrop -->
+        <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 z-30 sidebar-backdrop md:hidden opacity-0 pointer-events-none transition-opacity duration-300"></div>
+        
+        <aside id="sidebar" class="bg-white w-72 border-r border-gray-200 fixed md:relative h-full z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col">
+            <div class="p-8 hidden md:block">
+                <div class="flex items-center gap-3 mb-1">
+                    <div class="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center shadow-lg shadow-primary-600/20">
+                        <i class="fa-solid fa-leaf text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 leading-tight">Rafflesia</h2>
+                        <p class="text-xs text-gray-500 font-medium tracking-wide">GUEST GUIDE</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto px-4 py-2 space-y-1">
+                <a href="#welcome" class="nav-item group flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
+                    <i class="fa-solid fa-hand-sparkles w-6 text-center text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                    <span class="font-medium group-hover:text-gray-900">Welcome</span>
+                </a>
+                <a href="#location" class="nav-item group flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
+                    <i class="fa-solid fa-map-location-dot w-6 text-center text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                    <span class="font-medium group-hover:text-gray-900">Location</span>
+                </a>
+                <a href="#amenities" class="nav-item group flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
+                    <i class="fa-solid fa-layer-group w-6 text-center text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                    <span class="font-medium group-hover:text-gray-900">Amenities</span>
+                </a>
+                <a href="#contact" class="nav-item group flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
+                    <i class="fa-brands fa-whatsapp w-6 text-center text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                    <span class="font-medium group-hover:text-gray-900">Contact Host</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-100">
+                <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-6 text-center"></i>
+                    <span class="font-medium">Exit Guide</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-50/50 w-full relative scroll-smooth" id="main-scroll">
+            <div class="max-w-4xl mx-auto p-6 md:p-12 pb-32">
+                
+                <!-- Welcome Section -->
+                <section id="welcome" class="page-section hidden fade-enter">
+                    <div class="relative rounded-2xl overflow-hidden bg-gray-900 text-white mb-10 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Apartment Interior">
+                        <div class="relative p-8 md:p-12">
+                            <span class="inline-block px-3 py-1 rounded-full bg-primary-500/20 backdrop-blur-md border border-primary-400/30 text-primary-100 text-xs font-bold tracking-wider mb-4">CONFIRMED GUEST</span>
+                            <h1 class="text-3xl md:text-5xl font-bold mb-4">Welcome Home.</h1>
+                            <p class="text-lg text-gray-200 max-w-xl">We've prepared everything for your comfortable stay. Here's your quick guide to the essentials.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-wifi text-primary-600"></i> WiFi Access
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span class="text-sm text-gray-500">Network</span>
+                                    <span class="font-mono font-medium text-gray-900 select-all">Rafflesia_5G</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span class="text-sm text-gray-500">Password</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-mono font-medium text-gray-900 select-all">Guest2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-primary-600 to-primary-800 p-6 rounded-2xl text-white shadow-lg shadow-primary-600/20">
+                            <h3 class="font-bold text-lg mb-2">Quick Rules</h3>
+                            <ul class="space-y-2 text-primary-100 text-sm">
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check mt-1"></i> Check-out is at 11:00 AM</li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check mt-1"></i> No smoking indoors</li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check mt-1"></i> Quiet hours after 10:00 PM</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Location Section -->
+                <section id="location" class="page-section hidden fade-enter">
+                    <div class="flex items-end justify-between mb-8">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Location</h2>
+                            <p class="text-gray-500 mt-1">Getting around and finding us.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 mb-8">
+                        <div class="flex flex-col md:flex-row items-center justify-between p-6 gap-4">
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 rounded-full bg-blue-50 text-blue-600 shrink-0">
+                                    <i class="fa-solid fa-location-dot text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900">Rafflesia Condominium</h3>
+                                    <p class="text-gray-500 text-sm mt-1" id="address-text">123 Rafflesia Avenue, Tower B, #14-05, Singapore 123456</p>
+                                </div>
+                            </div>
+                            <button onclick="copyToClipboard('address-text')" class="group flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 font-medium transition-colors shrink-0">
+                                <i class="fa-regular fa-copy group-hover:scale-110 transition-transform"></i>
+                                <span class="copy-label">Copy Address</span>
+                            </button>
+                        </div>
+                        <div class="h-80 md:h-96 rounded-xl overflow-hidden bg-gray-100 relative">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.16244016024!2d103.84425!3d1.290270!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1sen!2ssg!4v1610000000000!5m2!1sen!2ssg" 
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                            </iframe>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Amenities Section -->
+                <section id="amenities" class="page-section hidden fade-enter">
+                    <div class="mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900">House Amenities</h2>
+                        <p class="text-gray-500 mt-1">Everything you need for a comfortable stay.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Card 1 -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-primary-200 transition-colors">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-shirt text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Laundry</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">Iron & Board are in the master bedroom wardrobe. The washer/dryer is in the kitchen yard area (detergent pods provided).</p>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-primary-200 transition-colors">
+                            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-mattress-pillow text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Linens & Towels</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">Extra towels and bed linens are stored in the TV console drawers. Please place used linens in the hamper.</p>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-primary-200 transition-colors">
+                            <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-trash-can text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Waste Disposal</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">Chute is located in the common corridor. Please bag all trash securely before disposal. Recyclables go in the blue bin.</p>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-primary-200 transition-colors">
+                            <div class="w-12 h-12 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-temperature-arrow-up text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Climate Control</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">AC remotes are mounted on the wall in each room. For hot water, switch on the heater 15 mins prior (switch next to bathroom light).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact Section -->
+                <section id="contact" class="page-section hidden fade-enter">
+                    <div class="max-w-lg mx-auto text-center pt-10">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 text-green-600 mb-6 animate-pulse">
+                            <i class="fa-brands fa-whatsapp text-4xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Need Assistance?</h2>
+                        <p class="text-gray-600 mb-8 text-lg">We're just a message away. Available 8:00 AM - 10:00 PM daily for any questions or emergencies.</p>
+                        
+                        <a href="https://wa.me/1234567890" target="_blank" 
+                           class="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 px-8 rounded-full transition-all shadow-lg hover:shadow-green-500/40 hover:-translate-y-1">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                            <span>Chat on WhatsApp</span>
+                        </a>
+                        
+                        <p class="mt-8 text-sm text-gray-400">Response time: Usually &lt; 10 minutes</p>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-3 transition-all duration-300 opacity-0 translate-y-10 pointer-events-none z-50">
+        <i class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="toast-message">Action successful</span>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const CONFIG = {
+            password: "guest",
+            sessionKey: "rafflesia_auth_v1"
+        };
+
+        // --- AUTHENTICATION ---
+        function initAuth() {
+            const isAuthenticated = sessionStorage.getItem(CONFIG.sessionKey) === 'true';
+            if (isAuthenticated) {
+                showApp();
+            } else {
+                // Check if user is trying to bypass via CSS manipulation (basic check)
+                document.getElementById('login-overlay').classList.remove('hidden');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const input = document.getElementById('password-input');
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (input.value.toLowerCase() === CONFIG.password.toLowerCase()) {
+                sessionStorage.setItem(CONFIG.sessionKey, 'true');
+                // visual feedback
+                const btn = e.target.querySelector('button');
+                btn.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                btn.classList.add('bg-green-500');
+                
+                setTimeout(showApp, 500);
+            } else {
+                errorMsg.classList.remove('opacity-0');
+                input.classList.add('ring-2', 'ring-red-400', 'bg-red-50');
+                setTimeout(() => {
+                    input.classList.remove('ring-2', 'ring-red-400', 'bg-red-50');
+                }, 2000);
+            }
+        }
+
+        function showApp() {
+            const overlay = document.getElementById('login-overlay');
+            const app = document.getElementById('app-layout');
+            
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            app.classList.remove('opacity-0');
+            
+            // Initialize routing
+            handleHashChange();
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500);
+        }
+
+        function logout() {
+            sessionStorage.removeItem(CONFIG.sessionKey);
+            window.location.reload();
+        }
+
+        // --- ROUTING ---
+        function handleHashChange() {
+            // Default to #welcome if empty or invalid
+            let hash = window.location.hash.substring(1) || 'welcome';
+            const targetSection = document.getElementById(hash);
+            
+            if (!targetSection) {
+                hash = 'welcome';
+                window.location.hash = hash;
+                return;
+            }
+
+            // Update UI
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('fade-enter-active');
+            });
+            
+            targetSection.classList.remove('hidden');
+            // Trigger reflow
+            void targetSection.offsetWidth; 
+            targetSection.classList.add('fade-enter-active');
+
+            // Update Sidebar State
+            document.querySelectorAll('.nav-item').forEach(link => {
+                const isActive = link.getAttribute('href') === '#' + hash;
+                if (isActive) {
+                    link.classList.add('bg-primary-50', 'text-primary-700');
+                    link.querySelector('i').classList.add('text-primary-600');
+                    link.querySelector('i').classList.remove('text-gray-400');
+                } else {
+                    link.classList.remove('bg-primary-50', 'text-primary-700');
+                    link.querySelector('i').classList.remove('text-primary-600');
+                    link.querySelector('i').classList.add('text-gray-400');
+                }
+            });
+
+            // Mobile: Close sidebar if open
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+                toggleSidebar();
+            }
+            
+            // Scroll to top
+            document.getElementById('main-scroll').scrollTop = 0;
+        }
+
+        window.addEventListener('hashchange', handleHashChange);
+
+        // --- UI INTERACTIONS ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Address copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy', true);
+            });
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            
+            if(isError) toast.querySelector('i').classList.replace('fa-circle-check', 'fa-circle-xmark');
+            
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', initAuth);
+
+    </script>
+</body>
+</html>
