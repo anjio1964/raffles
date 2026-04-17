@@ -7,22 +7,21 @@ echo "--- Git Status ---"
 git status
 
 echo ""
-echo "Staging all changes..."
-git add .
-
-# Prompt user for commit message
-echo -n "Enter commit message: "
-read -r commit_msg
-
-if [ -z "$commit_msg" ]; then
-    echo "Error: Commit message cannot be empty."
-    exit 1
+if git diff-index --quiet HEAD --; then
+    echo "No changes to commit, skipping git push."
+else
+    echo "Staging all changes..."
+    git add .
+    echo -n "Enter commit message: "
+    read -r commit_msg
+    if [ -z "$commit_msg" ]; then
+        echo "Error: Commit message cannot be empty."
+        exit 1
+    fi
+    git commit -m "$commit_msg"
+    echo "Pushing to remote..."
+    git push
 fi
-
-# Commit and Push
-git commit -m "$commit_msg"
-echo "Pushing to remote..."
-git push
 
 # Hosting Update
 echo "Deploying index.html to /var/www/html/..."
