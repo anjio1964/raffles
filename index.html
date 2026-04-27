@@ -144,7 +144,7 @@
                     <h3 class="px-4 text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Support</h3>
                     <div class="space-y-1">
                         <a href="#emergency" class="nav-item group flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
-                            <i class="fa-solid fa-phone-emergency w-5 text-center text-gray-400 group-hover:text-primary-600 transition-colors"></i>
+                            <i class="fa-solid fa-phone-volume w-5 text-center text-gray-400 group-hover:text-primary-600 transition-colors"></i>
                             <span class="font-medium group-hover:text-gray-900">Emergency</span>
                         </a>
                         <a href="#contact" class="nav-item group flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 transition-all">
@@ -480,15 +480,20 @@
 
                 <!-- Emergency Contacts Section -->
                 <section id="emergency" class="page-section hidden fade-enter">
-                    <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-900">Emergency Contacts</h2>
-                        <p class="text-gray-500 mt-1">Important numbers for your safety and assistance.</p>
+                    <div class="mb-8 flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
+                            <i class="fa-solid fa-circle-exclamation text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Emergency Contacts</h2>
+                            <p class="text-gray-500 mt-1">Important numbers for your safety and assistance.</p>
+                        </div>
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-red-50 p-6 rounded-2xl border border-red-100 shadow-sm">
                             <h3 class="font-bold text-red-900 mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-phone-emergency text-red-600"></i> Local Emergency
+                                <i class="fa-solid fa-phone-volume text-red-600"></i> Local Emergency
                             </h3>
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center p-3 bg-white/50 rounded-lg">
@@ -504,7 +509,7 @@
 
                         <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 shadow-sm">
                             <h3 class="font-bold text-blue-900 mb-4 flex items-center gap-2">
-                                <i class="fa-solid fa-building-shield text-blue-600"></i> Building Management
+                                <i class="fa-solid fa-shield-halved text-blue-600"></i> Building Management
                             </h3>
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center p-3 bg-white/50 rounded-lg">
